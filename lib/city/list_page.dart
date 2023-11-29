@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:resas_basic/city/detail_page.dart';
 
 class CityListPage extends StatelessWidget {
   const CityListPage({super.key});
@@ -26,35 +27,19 @@ class CityListPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('市区町村一覧'),
       ),
-      body: ListView(
-        children: [
-          for (final city in cities)
-            ListTile(
-              title: Text(city),
-              subtitle: const Text('政令指定都市'),
-              trailing: const Icon(Icons.navigate_next),
-              onTap: () {
-                //To do :詳細画面に遷移
-              },
-            ),
+      body: ListView(children: [
+        for (final city in cities)
           ListTile(
-            title: const Text('横浜市'),
+            title: Text(city),
             subtitle: const Text('政令指定都市'),
             trailing: const Icon(Icons.navigate_next),
             onTap: () {
-              //To do :詳細画面に遷移
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const CityDetailPage(),
+              ));
             },
           ),
-          ListTile(
-            title: const Text('川崎市'),
-            subtitle: const Text('政令指定都市'),
-            trailing: const Icon(Icons.navigate_next),
-            onTap: () {
-              //To do :詳細画面に遷移
-            },
-          ),
-        ],
-      ),
+      ]),
     );
   }
 }
