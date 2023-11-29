@@ -34,9 +34,11 @@ class CityListPage extends StatelessWidget {
             subtitle: const Text('政令指定都市'),
             trailing: const Icon(Icons.navigate_next),
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const CityDetailPage(),
-              ));
+              Navigator.of(context).push<void>(
+                MaterialPageRoute(
+                  builder: (context) => CityDetailPage(city: city),
+                ),
+              );
             },
           ),
       ]),
