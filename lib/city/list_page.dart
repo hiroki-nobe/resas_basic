@@ -27,21 +27,40 @@ class CityListPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('市区町村一覧'),
       ),
-      body: ListView(children: [
-        for (final city in cities)
-          ListTile(
-            title: Text(city),
-            subtitle: const Text('政令指定都市'),
-            trailing: const Icon(Icons.navigate_next),
-            onTap: () {
-              Navigator.of(context).push<void>(
-                MaterialPageRoute(
-                  builder: (context) => CityDetailPage(city: city),
-                ),
+      body: FutureBuilder<void>(
+        future: Future.delayed(const Duration(seconds: 3)),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            // 非同期処理が完了（3秒後）したこと示す状態です。
+            case ConnectionState.done:
+              // 元々のListViewを移動させただけです
+              return ListView(
+                children: [
+                  for (final city in cities)
+                    ListTile(
+                      title: Text(city),
+                      subtitle: const Text('政令指定都市'),
+                      trailing: const Icon(Icons.navigate_next),
+                      onTap: () {
+                        Navigator.of(context).push<void>(
+                          MaterialPageRoute(
+                            builder: (context) => CityDetailPage(city: city),
+                          ),
+                        );
+                      },
+                    ),
+                ],
               );
-            },
-          ),
-      ]),
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+          }
+          // 非同期処理が完了するまではインジケータを表示します。
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
     );
   }
 }
