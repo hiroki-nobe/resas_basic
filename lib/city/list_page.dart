@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:resas_basic/city/detail_page.dart';
 import 'package:resas_basic/env.dart';
 
+import 'city.dart';
+
 class CityListPage extends StatefulWidget {
   const CityListPage({super.key});
 
@@ -18,7 +20,6 @@ class _CityListPageState extends State<CityListPage> {
   @override
   void initState() {
     super.initState();
-    _citiesfuture = Future.delayed(const Duration(seconds: 3));
     const host = 'opendata.resas-portal.go.jp';
     const endpoint = '/api/v1/cities';
     final headers = {
@@ -46,19 +47,20 @@ class _CityListPageState extends State<CityListPage> {
             case ConnectionState.done:
               final List json = jsonDecode(snapshot.data!)['result'] as List;
               final items = json.cast<Map<String, dynamic>>();
+              final cities = items.map(City.fromJson).toList();
               return ListView.builder(
-                itemCount: items.length,
+                itemCount: cities.length,
                 itemBuilder: (context, index) {
-                  final item = items[index];
+                  final city = cities[index];
                   return ListTile(
-                    title: Text(item['cityVame'] as String),
-                    subtitle: const Text('政令指定都市'),
+                    title: Text(city.cityName),
+                    subtitle: Text(city.bigCityFlag),
                     trailing: const Icon(Icons.navigate_next),
                     onTap: () {
                       Navigator.of(context).push<void>(
                         MaterialPageRoute(
                           builder: (context) =>
-                              CityDetailPage(city: item['cityVame'] as String),
+                              CityDetailPage(city: city.cityName),
                         ),
                       );
                     },
