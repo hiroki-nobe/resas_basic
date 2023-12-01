@@ -6,11 +6,12 @@ import 'package:intl/intl.dart';
 import 'package:resas_basic/city/annual_municipality_tax.dart';
 
 import '../env.dart';
+import 'city.dart';
 
 class CityDetailPage extends StatefulWidget {
   const CityDetailPage({super.key, required this.city});
 
-  final String city;
+  final City city;
 
   @override
   State<CityDetailPage> createState() => _CityDetailPageState();
@@ -29,8 +30,8 @@ class _CityDetailPageState extends State<CityDetailPage> {
     };
     // 今回はパラメータを指定します
     final param = {
-      'prefCode': '14',
-      'cityCode': '14131',
+      'prefCode': widget.city.prefCode.toString(),
+      'cityCode': widget.city.cityCode,
     };
 
     _municipalityTaxesFuture = http
@@ -46,7 +47,7 @@ class _CityDetailPageState extends State<CityDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.city),
+        title: Text(widget.city.cityName),
       ),
       body: FutureBuilder<String>(
           future: _municipalityTaxesFuture,
@@ -57,8 +58,11 @@ class _CityDetailPageState extends State<CityDetailPage> {
                     as Map<String, dynamic>;
                 final data = result['data'] as List;
                 final items = data.cast<Map<String, dynamic>>();
-                final taxes =
-                    items.map(AnnualMunicipalityTax.fromJson).toList();
+                final taxes = items
+                    .map(AnnualMunicipalityTax.fromJson)
+                    .toList()
+                    .reversed
+                    .toList();
 
                 return ListView.separated(
                   itemCount: taxes.length,
