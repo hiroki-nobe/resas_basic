@@ -62,7 +62,7 @@ class _CityDetailPageState extends State<CityDetailPage> {
                   itemBuilder: (context, index) {
                     final item = items[index];
                     return ListTile(
-                      title: Text(item['year'].toString()),
+                      title: Text('${item['year'].toString()}年'),
                       trailing: Text('${item['value']}円'),
                     );
                   },
