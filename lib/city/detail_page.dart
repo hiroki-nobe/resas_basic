@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,7 +16,6 @@ class CityDetailPage extends StatefulWidget {
 
 class _CityDetailPageState extends State<CityDetailPage> {
   late Future<String> _municipalityTaxesFuture;
-
   @override
   void initState() {
     super.initState();
@@ -45,9 +46,35 @@ class _CityDetailPageState extends State<CityDetailPage> {
       appBar: AppBar(
         title: Text(widget.city),
       ),
-      body: Center(
-        child: Text('${widget.city}の詳細画面です'),
-      ),
+      body: FutureBuilder<String>(
+          future: _municipalityTaxesFuture,
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                final result = jsonDecode(snapshot.data!)['result']
+                    as Map<String, dynamic>;
+                final data = result['data'] as List;
+                final items = data.cast<Map<String, dynamic>>();
+
+                return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return ListTile(
+                      title: Text(item['year'].toString()),
+                      trailing: Text('${item['value']}円'),
+                    );
+                  },
+                );
+
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+              case ConnectionState.active:
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }),
     );
   }
 }
